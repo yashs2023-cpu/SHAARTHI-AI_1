@@ -1,245 +1,198 @@
-# 🏛️ Saarthi AI - Complete Documentation
+# 🇮🇳 Saarthi AI — आपका डिजिटल साथी
 
-## 📌 Project Overview
+> India's first multi-persona AI companion — built for students, families, seniors & entrepreneurs.
 
-**Saarthi AI** is a royal, inclusive AI ecosystem for Bharat designed for 4 distinct personas with 20+ unique features. Built with React, Node.js, MongoDB, and deployed on Vercel.
-
----
-
-## 👥 Four Personas & Features
-
-### 🏡 **Amma Mode** (Homemakers)
-1. **Government Schemes** - PM-Kisan, Ujjwala, MGNREGA, Ayushman
-2. **Recipe AI** - Multi-cuisine recipes with nutrition
-3. **Grocery Planner** - Budget optimization
-4. **Smart Reminders** - Family events & medications
-5. **Community Support** - Join/create SHGs
-
-### 🏢 **Business Mode** (Entrepreneurs)
-1. **Business Insights AI** - Revenue, profit, growth metrics
-2. **Customer Log** - Manage client relationships
-3. **Expense Tracking** - Categorized business expenses
-4. **Employee Management** - Roster & attendance
-5. **Family Wellness** - Health check scheduling
-
-### 👴 **Senior Mode** (Elderly)
-1. **SOS Emergency** - Large buttons for quick emergency calls
-2. **Medical Reminders** - Medicine schedule tracking
-3. **Memory Management** - Important dates keeper
-4. **Digital Companion** - Tech learning videos
-5. **Government Benefits** - Pension, insurance, schemes
-
-### 🎓 **Student Mode** (Academics)
-1. **Productivity Coach** - Pomodoro timer & study tips
-2. **Notes Summarizer** - AI-generated study materials
-3. **Scholarship Finder** - Internship & grant opportunities
-4. **Student Finance** - Budget tracker
-5. **Career Navigator** - Career path planning
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-black?style=for-the-badge&logo=vercel)](https://shaarthi-ai.vercel.app)
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react)](https://react.dev)
+[![Vite](https://img.shields.io/badge/Vite-4-646CFF?style=for-the-badge&logo=vite)](https://vitejs.dev)
+[![Gemini AI](https://img.shields.io/badge/Gemini-AI-4285F4?style=for-the-badge&logo=google)](https://aistudio.google.com)
 
 ---
 
-## 🛠️ Tech Stack
+## 🌟 What is Saarthi?
 
-### Frontend
-- React 18.2
-- Vite (Build tool)
-- CSS-in-JS styling
-- Custom hooks
-- Context API
-
-### Backend
-- Node.js + Express
-- MongoDB + Mongoose
-- JWT Authentication
-- CORS enabled
-
-### Deployment
-- **Frontend**: Vercel
-- **Backend**: Vercel/Render/Railway
-- **Database**: MongoDB Atlas
-- **Domain**: Custom domain on Vercel
+Saarthi is a **hackathon-winning**, production-quality AI companion designed for Bharat.
+It solves real problems faced by millions of Indians — digital scams, career confusion,
+government scheme awareness, and digital literacy gaps.
 
 ---
 
-## 🚀 Getting Started
+## 🎭 Four Personas
 
-### 1. Clone Repository
+| Persona | Target | Key Features |
+|---------|--------|-------------|
+| 🏡 **Amma Saarthi** | Homemakers & Families | Govt schemes, recipes, grocery, community |
+| 🎓 **Student Saarthi** | Students 14–25 | Career guide, study planner, scholarships |
+| 👴 **Senior Saarthi** | Citizens 60+ | SOS emergency, health reminders, scam protection |
+| 💼 **Business Saarthi** | Entrepreneurs | GST guide, insights, customer CRM, AI advisor |
+
+---
+
+## 🛡️ Scam Shield (Flagship Feature)
+
+Real-time AI-powered fraud detection for:
+- 📱 SMS messages
+- 💬 WhatsApp messages  
+- 💳 UPI payment requests
+- 🔗 Suspicious URLs / links
+- 📧 Email phishing
+
+Returns: **Risk Score · SAFE / MEDIUM / HIGH / CRITICAL · Recommendations**
+
+---
+
+## 🚀 Quick Start
+
 ```bash
+# Clone
 git clone https://github.com/yashs2023-cpu/shaarthi-ai.git
 cd shaarthi-ai
-```
 
-### 2. Frontend Setup
-```bash
+# Install
 npm install
-npm run dev
-```
-Access at `http://localhost:3000`
 
-### 3. Backend Setup
-```bash
-cd backend
-npm install
+# Add Gemini API key (optional — app works without it)
 cp .env.example .env
-npm run dev
-```
-API runs at `http://localhost:5000`
+# Edit .env and add VITE_GEMINI_API_KEY=your_key
 
-### 4. Login
-- Email: any@email.com
-- Password: any password (auto-registers)
+# Run
+npm run dev
+# Opens at http://localhost:3000
+```
 
 ---
 
-## 📁 Project Structure
+## 🗂️ Project Structure
 
 ```
-shaarthi-ai/
+saarthi-ai/
 ├── src/
+│   ├── App.jsx                    # Root with React Router
+│   ├── main.jsx                   # Entry point
+│   ├── styles/globals.css         # Premium design system
+│   │
+│   ├── pages/
+│   │   ├── Landing.jsx            # Premium landing page
+│   │   ├── Login.jsx              # Login / Register
+│   │   ├── PersonaSelect.jsx      # Choose your Saarthi
+│   │   ├── ScamShield.jsx         # Flagship scam detector
+│   │   └── dashboards/
+│   │       ├── AmmaDashboard.jsx
+│   │       ├── StudentDashboard.jsx
+│   │       ├── SeniorDashboard.jsx
+│   │       └── BusinessDashboard.jsx
+│   │
 │   ├── components/
-│   │   ├── pages/ (Landing, Login, Dashboard)
-│   │   ├── shared/ (Button, Card, FormInput, Toast)
-│   │   └── modes/ (Amma, Business, Senior, Student)
-│   ├── contexts/ (Auth, Mode)
-│   ├── hooks/ (useAuth, useToast, useVoice)
-│   ├── services/ (auth, api, storage)
-│   ├── styles/ (globals.css)
-│   └── App.jsx
-├── backend/
-│   ├── models/ (User, Recipe, Scheme, etc.)
-│   ├── routes/ (auth, recipes, schemes, scholarships)
-│   ├── controllers/ (Business logic)
-│   ├── middleware/ (Authentication)
-│   └── server.js
-├── .env.example
-├── vercel.json
-└── DEPLOYMENT.md
+│   │   ├── layout/
+│   │   │   └── DashboardShell.jsx # Sidebar + layout
+│   │   ├── shared/
+│   │   │   ├── AIChat.jsx         # Reusable AI chat (Gemini)
+│   │   │   ├── VoiceButton.jsx    # Speech recognition
+│   │   │   ├── Button.jsx
+│   │   │   ├── Card.jsx
+│   │   │   ├── FormInput.jsx
+│   │   │   ├── Toast.jsx
+│   │   │   └── ProtectedRoute.jsx
+│   │   └── modes/
+│   │       ├── amma/              # Amma persona pages
+│   │       ├── student/           # Student persona pages
+│   │       ├── senior/            # Senior persona pages
+│   │       └── business/          # Business persona pages
+│   │
+│   ├── contexts/
+│   │   ├── AuthContext.jsx
+│   │   ├── ModeContext.jsx
+│   │   └── ToastContext.jsx
+│   │
+│   ├── services/
+│   │   ├── gemini.js              # Gemini AI integration
+│   │   ├── scamDetection.js       # Fraud detection engine
+│   │   ├── voice.js               # Speech API wrapper
+│   │   ├── auth.js                # Auth service
+│   │   ├── api.js                 # API service
+│   │   └── storage.js             # localStorage DB
+│   │
+│   ├── hooks/
+│   │   ├── useAuth.js
+│   │   ├── useToast.js
+│   │   └── useVoice.js
+│   │
+│   └── config/
+│       └── personaPrompts.js      # Per-persona AI system prompts
+│
+├── backend/                       # Express + MongoDB API
+│   ├── server.js
+│   ├── controllers/
+│   ├── models/
+│   ├── routes/
+│   └── middleware/
+│
+├── vercel.json                    # Vercel deployment config
+├── vite.config.js
+└── package.json
 ```
 
 ---
 
 ## 🎨 Design System
 
-### Color Palette
-- **Amma**: Orange (#F4A300)
-- **Business**: Indigo (#1E1F57)
-- **Senior**: Teal (#7FB7BE)
-- **Student**: Purple (#4F46E5)
-- **Primary**: Royal Indigo (#1E1F57)
-- **Secondary**: Gold (#D4AF37)
-
-### Typography
-- **Headers**: Cinzel (serif)
-- **Body**: Poppins (sans-serif)
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--saffron` | `#FF9933` | Primary CTA, Amma persona |
+| `--navy` | `#1B365D` | Navigation, Business persona |
+| `--ivory` | `#FFF8E7` | Background |
+| `--gold` | `#D4AF37` | Accents, premium elements |
+| Student | `#6C63FF` | Student persona |
+| Senior | `#0EA5E9` | Senior persona |
 
 ---
 
-## 🔐 Security
+## ⚡ Tech Stack
 
-- Password hashing with bcryptjs
-- JWT token authentication
-- CORS protection
-- Environment variables for secrets
-- Input validation on backend
-
----
-
-## 📊 Database Schema
-
-### Users
-```javascript
-{
-  name, email, phone, password,
-  mode, language, createdAt
-}
-```
-
-### Recipes
-```javascript
-{
-  userId, name, cuisine, ingredients,
-  steps, cookingTime, difficulty, nutrition
-}
-```
-
-### Schemes
-```javascript
-{
-  name, category, benefit, eligibility,
-  documents, deadline, applicationUrl
-}
-```
+- **Frontend:** React 18 · React Router 6 · Vite 4
+- **AI:** Google Gemini 2.0 Flash
+- **Voice:** Web Speech API (STT + TTS)
+- **Backend:** Node.js · Express · MongoDB · Mongoose
+- **Deploy:** Vercel (frontend) · Render/Railway (backend)
+- **Auth:** JWT + localStorage
 
 ---
 
-## 🚀 Deployment Steps
+## 🌐 Deployment
 
-### 1. Deploy Frontend to Vercel
-```bash
-npm run build
-# Use vercel.json for config
-```
+### Frontend (Vercel)
+1. Push to GitHub
+2. Import repo at [vercel.com](https://vercel.com)
+3. Add env var: `VITE_GEMINI_API_KEY`
+4. Deploy — done!
 
-### 2. Deploy Backend to Vercel
+### Backend (Optional)
 ```bash
 cd backend
-vercel deploy
+npm install
+# Add MONGODB_URI and JWT_SECRET to .env
+npm start
 ```
 
-### 3. Set Environment Variables
-On Vercel dashboard:
-- `MONGODB_URI`
-- `JWT_SECRET`
-
-### 4. Update API URLs
-Update `.env.production` with your deployed API URL
-
 ---
 
-## 📈 Planned Enhancements
+## 🏆 Hackathon Features
 
-- [ ] Voice integration (Text-to-Speech)
-- [ ] Multi-language support (Hindi, Tamil, Telugu, Kannada)
-- [ ] Offline mode with sync
-- [ ] Push notifications
-- [ ] Video tutorials
-- [ ] Payment integration
-- [ ] Advanced analytics
-- [ ] AI chatbot support
-- [ ] Social features (sharing, groups)
-- [ ] Mobile app (React Native)
-
----
-
-## 🤝 Contributing
-
-1. Fork repository
-2. Create feature branch (`git checkout -b feature/new-feature`)
-3. Commit changes (`git commit -m "Add new feature"`)
-4. Push to branch (`git push origin feature/new-feature`)
-5. Open Pull Request
-
----
-
-## 📞 Support
-
-- GitHub Issues: Report bugs
-- Email: support@saarthi.ai
-- Twitter: @SaarthiAI
+- ✅ 4 distinct AI personas with separate prompts
+- ✅ Real-time scam detection engine
+- ✅ Gemini AI integration (ready to activate)
+- ✅ Voice-first interface (Hindi + English + 4 regional languages)
+- ✅ Government schemes discovery
+- ✅ Senior accessibility mode (larger UI)
+- ✅ Premium Indian-inspired design
+- ✅ Production-quality code (no TODOs)
 
 ---
 
 ## 📄 License
 
-MIT License - See LICENSE file
+MIT — Built with ❤️ for Bharat
 
 ---
 
-## 🙏 Acknowledgments
-
-Built for India 🇮🇳 with ❤️
-Empowering 4 personas, 20 features, infinite possibilities
-
----
-
-**Saarthi AI** - Your Royal Digital Companion
+*Saarthi AI — Guiding India into the Digital Future* 🇮🇳
