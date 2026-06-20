@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useToast } from '../../../hooks/useToast';
+import { useLanguage } from '../../../contexts/LanguageContext';
+import voiceService from '../../../services/voice';
 
 const SCHEMES = [
   {
@@ -12,6 +14,7 @@ const SCHEMES = [
     documents: ['Aadhaar Card', 'Bank Passbook', 'Land Certificate'],
     deadline: 'Ongoing',
     tag: 'Agriculture',
+    applicationUrl: 'https://pmkisan.gov.in/',
   },
   {
     id: 2, category: 'energy', icon: '🔥',
@@ -23,6 +26,7 @@ const SCHEMES = [
     documents: ['Aadhaar', 'BPL Certificate', 'Passport Photo'],
     deadline: 'Ongoing',
     tag: 'Energy',
+    applicationUrl: 'https://www.pmuy.gov.in/',
   },
   {
     id: 3, category: 'health', icon: '🏥',
@@ -34,6 +38,7 @@ const SCHEMES = [
     documents: ['Aadhaar', 'Ration Card', 'PMJAY Card'],
     deadline: 'Ongoing',
     tag: 'Health',
+    applicationUrl: 'https://pmjay.gov.in/',
   },
   {
     id: 4, category: 'employment', icon: '👷',
@@ -45,6 +50,7 @@ const SCHEMES = [
     documents: ['ID Proof', 'Address Proof', 'Job Card Application'],
     deadline: 'Ongoing',
     tag: 'Employment',
+    applicationUrl: 'https://nrega.nic.in/',
   },
   {
     id: 5, category: 'women', icon: '👩',
@@ -56,6 +62,7 @@ const SCHEMES = [
     documents: ['Aadhaar', 'MCP Card', 'Bank Account'],
     deadline: 'Within 270 days of pregnancy',
     tag: 'Women',
+    applicationUrl: 'https://wcd.nic.in/schemes/pradhan-mantri-matru-vandana-yojana',
   },
   {
     id: 6, category: 'housing', icon: '🏠',
@@ -67,6 +74,7 @@ const SCHEMES = [
     documents: ['Aadhaar', 'BPL Certificate', 'Land Ownership Proof'],
     deadline: 'Ongoing',
     tag: 'Housing',
+    applicationUrl: 'https://pmayg.nic.in/',
   },
 ];
 
@@ -85,8 +93,18 @@ export default function AmmaSchemes() {
   const [search, setSearch] = useState('');
   const [expanded, setExpanded] = useState(null);
   const { showToast } = useToast();
+  const { language, t } = useLanguage();
+  const sT = t?.schemes || {};
 
-  const filtered = SCHEMES.filter(s => {
+  const handleListen = (scheme) => {
+    const textToSpeak = `${scheme.name}. Benefits: ${scheme.benefit}. ${scheme.description}. Eligibility: ${scheme.eligibility}. Required documents are: ${scheme.documents.join(', ')}.`;
+    showToast(`Listening to ${scheme.name}… 🔊`, 'info');
+    voiceService.speak(textToSpeak, language, 'amma');
+  };
+
+  const currentSchemes = sT.defaultMock || SCHEMES;
+
+  const filtered = currentSchemes.filter(s => {
     const matchCat = category === 'all' || s.category === category;
     const matchSearch = !search || s.name.toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSearch;
@@ -96,22 +114,30 @@ export default function AmmaSchemes() {
     <div style={styles.page}>
       <div style={styles.header}>
         <div>
-          <h1 style={styles.title}>Government Schemes 🏛️</h1>
-          <p style={styles.subtitle}>Discover benefits you deserve — apply directly from here</p>
+          <h1 style={styles.title}>{sT.title}</h1>
+          <p style={styles.subtitle}>{sT.subtitle}</p>
         </div>
       </div>
 
       {/* Search */}
       <input
         className="saarthi-input"
-        placeholder="🔍 Search schemes…"
+        placeholder={`🔍 ${sT.searchPlaceholder}`}
         value={search}
         onChange={e => setSearch(e.target.value)}
       />
 
       {/* Category filters */}
       <div style={styles.filters}>
-        {CATEGORIES.map(c => (
+        {[
+          { key: 'all',         label: sT.cats?.all || 'All Schemes' },
+          { key: 'agriculture', label: sT.cats?.agriculture || '🌾 Agriculture' },
+          { key: 'health',      label: sT.cats?.health || '🏥 Health' },
+          { key: 'employment',  label: sT.cats?.employment || '👷 Employment' },
+          { key: 'women',       label: sT.cats?.women || '👩 Women' },
+          { key: 'housing',     label: sT.cats?.housing || '🏠 Housing' },
+          { key: 'energy',      label: sT.cats?.energy || '🔥 Energy' },
+        ].map(c => (
           <button
             key={c.key}
             style={{
@@ -152,19 +178,19 @@ export default function AmmaSchemes() {
                 <p style={styles.schemeDesc}>{s.description}</p>
                 <div style={styles.detailGrid}>
                   <div style={styles.detailItem}>
-                    <span style={styles.detailLabel}>✓ Eligibility</span>
+                    <span style={styles.detailLabel}>✓ {sT.eligibility}</span>
                     <span>{s.eligibility}</span>
                   </div>
                   <div style={styles.detailItem}>
-                    <span style={styles.detailLabel}>📋 How to Apply</span>
+                    <span style={styles.detailLabel}>📋 {sT.howToApply}</span>
                     <span>{s.howToApply}</span>
                   </div>
                   <div style={styles.detailItem}>
-                    <span style={styles.detailLabel}>📅 Deadline</span>
+                    <span style={styles.detailLabel}>📅 {sT.deadline}</span>
                     <span>{s.deadline}</span>
                   </div>
                   <div style={styles.detailItem}>
-                    <span style={styles.detailLabel}>📄 Documents</span>
+                    <span style={styles.detailLabel}>📄 {sT.documents}</span>
                     <span>{s.documents.join(' · ')}</span>
                   </div>
                 </div>
@@ -172,15 +198,15 @@ export default function AmmaSchemes() {
                   <button
                     className="btn btn-sm"
                     style={{ background: 'var(--saffron)', color: '#fff', borderRadius: 'var(--r-full)' }}
-                    onClick={() => showToast('Opening application form… 📋', 'info')}
+                    onClick={() => window.open(s.applicationUrl, '_blank')}
                   >
-                    📝 Apply Now
+                    📝 {sT.applyNow}
                   </button>
                   <button
-                    className="btn btn-sm btn-ghost"
-                    onClick={() => showToast('Scheme saved to favorites! ❤️', 'success')}
+                    className="btn btn-sm btn-primary"
+                    onClick={() => handleListen(s)}
                   >
-                    ❤️ Save
+                    🔊 {sT.listen}
                   </button>
                 </div>
               </div>
@@ -236,5 +262,5 @@ const styles = {
     color: 'var(--gray-700)',
   },
   detailLabel: { fontWeight: 700, color: 'var(--gray-500)', fontSize: 11, textTransform: 'uppercase', marginBottom: 2 },
-  actions: { display: 'flex', gap: 10 },
+  actions: { display: 'flex', gap: 10, flexWrap: 'wrap' },
 };

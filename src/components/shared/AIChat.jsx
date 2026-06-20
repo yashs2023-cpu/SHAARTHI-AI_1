@@ -1,8 +1,36 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useToast } from '../../hooks/useToast';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { personaPrompts } from '../../config/personaPrompts';
 import VoiceButton from './VoiceButton';
 import geminiService from '../../services/gemini';
+
+const GREETINGS = {
+  en: {
+    amma: '🙏 Namaste! I am your Amma Saarthi. How can I help you today?',
+    student: '📚 Hey! I\'m your Student Saarthi. Ready to help with studies, career guidance, and more!',
+    senior: '🙏 Namaste! I am your Saarthi. How can I assist you?',
+    business: '💼 Good day! I\'m your Business Saarthi. Let\'s grow your business together!'
+  },
+  hi: {
+    amma: '🙏 Namaste! Main aapki Amma Saarthi hoon. Aaj main aapki kaise madad kar sakti hoon?',
+    student: '📚 Namaste! Main aapka Student Saarthi hoon. Padhai aur career mein madad ke liye taiyar!',
+    senior: '🙏 Namaste! Main aapka Saarthi hoon. Kya main aapki koi madad kar sakta hoon?',
+    business: '💼 Namaskar! Main aapka Business Saarthi hoon. Chaliye aapke business ko aage badhayen!'
+  },
+  ta: {
+    amma: '🙏 வணக்கம்! நான் உங்கள் அம்மா சாரதி. இன்று நான் உங்களுக்கு எப்படி உதவ முடியும்?',
+    student: '📚 வணக்கம்! நான் உங்கள் மாணவர் சாரதி. படிப்பில் உதவ தயார்!',
+    senior: '🙏 வணக்கம்! நான் உங்கள் சாரதி. நான் உங்களுக்கு எப்படி உதவலாம்?',
+    business: '💼 வணக்கம்! நான் உங்கள் வணிக சாரதி. உங்கள் வணிகத்தை வளர்க்கலாம்!'
+  },
+  te: {
+    amma: '🙏 నమస్తే! నేను మీ అమ్మ సారథిని. ఈ రోజు నేను మీకు ఎలా సహాయపడగలను?',
+    student: '📚 నమస్తే! నేను మీ విద్యార్థి సారథిని. చదువులో సహాయం చేయడానికి సిద్ధం!',
+    senior: '🙏 నమస్తే! నేను మీ సారథిని. నేను మీకు ఎలా సహాయపడగలను?',
+    business: '💼 నమస్తే! నేను మీ వ్యాపార సారథిని. వ్యాపారాన్ని అభివృద్ధి చేద్దాం!'
+  }
+};
 
 export default function AIChat({ persona, placeholder, suggestedPrompts = [] }) {
   const [messages, setMessages] = useState([]);
@@ -10,23 +38,19 @@ export default function AIChat({ persona, placeholder, suggestedPrompts = [] }) 
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
   const { showToast } = useToast();
+  const { language } = useLanguage();
   const personaInfo = personaPrompts[persona] || {};
 
-  // Welcome message on mount
+  // Welcome message on mount or language change
   useEffect(() => {
-    const greetings = {
-      amma:     '🙏 Namaste! Main aapki Amma Saarthi hoon. Aaj main aapki kaise madad kar sakti hoon?',
-      student:  '📚 Hey! I\'m your Student Saarthi. Ready to help with studies, career guidance, and more!',
-      senior:   '🙏 Namaste! Main aapka Saarthi hoon. Kya main aapki koi madad kar sakta hoon?',
-      business: '💼 Good day! I\'m your Business Saarthi. Let\'s grow your business together!',
-    };
+    const langGreetings = GREETINGS[language] || GREETINGS.en;
     setMessages([{
       id: 1,
       role: 'assistant',
-      text: greetings[persona] || '🙏 Namaste! How can I help you today?',
+      text: langGreetings[persona] || langGreetings.amma,
       time: new Date(),
     }]);
-  }, [persona]);
+  }, [persona, language]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -40,9 +64,9 @@ export default function AIChat({ persona, placeholder, suggestedPrompts = [] }) 
     setLoading(true);
 
     try {
-      // Build a simple prompt with the persona system context
+      // Build a simple prompt with the persona system context and language instruction
       const systemContext = personaInfo.systemPrompt || '';
-      const prompt = `${systemContext}\n\nUser: ${text.trim()}\n\nAssistant:`;
+      const prompt = `${systemContext}\n\nIMPORTANT: You must respond entirely in the language corresponding to this language code: "${language}".\n\nUser: ${text.trim()}\n\nAssistant:`;
 
       // Try Gemini, fallback to intelligent local response
       let responseText = '';
@@ -63,7 +87,7 @@ export default function AIChat({ persona, placeholder, suggestedPrompts = [] }) 
       } catch { /* fallback below */ }
 
       if (!responseText) {
-        responseText = getLocalResponse(persona, text.trim());
+        responseText = getLocalResponse(persona, text.trim(), language);
       }
 
       const assistantMsg = {
@@ -161,32 +185,56 @@ export default function AIChat({ persona, placeholder, suggestedPrompts = [] }) 
   );
 }
 
-function getLocalResponse(persona, text) {
-  const lower = text.toLowerCase();
+function getLocalResponse(persona, text, language) {
   const responses = {
-    amma: [
-      'Main samajh gayi! Aapke liye government schemes check karte hain. PM-Kisan, Ujjwala Yojana aur Ayushman Bharat available hain. Kaunsa dekhna chahte hain?',
-      'Bilkul! Recipe ke liye — aap kaunsi sabzi ki recipe chahte hain? Main step-by-step bataungi 🍳',
-      'Grocery planning ke liye main suggest karungi ki local market se kharidein for fresh produce aur savings ke liye bulk buying karein 🛒',
-    ],
-    student: [
-      'Great question! For career guidance, first identify your core interests and strengths. Then explore courses and certifications in your chosen field. I can help create a personalized roadmap! 🚀',
-      'For study plans, the Pomodoro technique works great — 25 min study, 5 min break. Want me to create a schedule for you? 📚',
-      'There are several scholarships available! National Merit Scholarship, state-level grants, and company CSR scholarships. Which category are you eligible for? 🏅',
-    ],
-    senior: [
-      'Bilkul, main samajhata hoon. Safety ke liye yaad rakhein — koi bhi bank kabhi OTP nahi maangta. Agar koi phone karke OTP maange to woh scam hai! 🛡️',
-      'Medicine reminder set karne ke liye Health section mein jaiye. Main aapko har dose ki yaad dilaunga ❤️',
-      'Agar emergency ho to SOS button dabaiye — sabse pehle family ko inform karein, phir doctor ko call karein 🆘',
-    ],
-    business: [
-      'For business growth, focus on 3 key areas: customer retention (costs 5x less than acquisition), digital presence (Google My Business is free!), and cash flow management. Which area do you want to explore? 📊',
-      'GST filing: File GSTR-1 by 11th of next month, GSTR-3B by 20th. Keep all purchase invoices. I can guide you through each step 🏛️',
-      'For loan eligibility: maintain 2+ years of ITR, keep credit score above 700, and have clear business financials. Banks like SBI and HDFC offer MSME loans at competitive rates 💰',
-    ],
+    en: {
+      amma: [
+        'I understand! Let me check the government schemes for you. PM-Kisan, Ujjwala Yojana, and Ayushman Bharat are available. Which one would you like to see?',
+        'Absolutely! For the recipe — which vegetable recipe would you like? I will tell you step-by-step 🍳',
+        'For grocery planning, I suggest buying from the local market for fresh produce and buying in bulk for savings 🛒',
+      ],
+      student: [
+        'Great question! For career guidance, first identify your core interests. I can help create a personalized roadmap! 🚀',
+        'For study plans, the Pomodoro technique works great. Want me to create a schedule for you? 📚',
+        'There are several scholarships available! Which category are you eligible for? 🏅',
+      ],
+      senior: [
+        'I understand. For safety remember — no bank ever asks for OTP. If someone calls and asks for OTP, it is a scam! 🛡️',
+        'To set a medicine reminder, go to the Health section. I will remind you of every dose ❤️',
+        'In case of emergency, press the SOS button — first inform family, then call the doctor 🆘',
+      ],
+      business: [
+        'For business growth, focus on customer retention and digital presence. Which area do you want to explore? 📊',
+        'GST filing: File GSTR-1 by 11th of next month. I can guide you through each step 🏛️',
+        'For loan eligibility: maintain 2+ years of ITR and keep credit score above 700. 💰',
+      ],
+    },
+    hi: {
+      amma: [
+        'Main samajh gayi! Aapke liye government schemes check karte hain. PM-Kisan, Ujjwala Yojana aur Ayushman Bharat available hain.',
+        'Bilkul! Recipe ke liye — aap kaunsi sabzi ki recipe chahte hain? Main step-by-step bataungi 🍳',
+        'Grocery planning ke liye main suggest karungi ki local market se kharidein for fresh produce 🛒',
+      ],
+      student: [
+        'Badhiya sawaal! Career guidance ke liye apni interests pehchano. Main roadmap banane mein madad karunga! 🚀',
+        'Padhai ke liye Pomodoro technique best hai. Kya main schedule banaun? 📚',
+        'Bahut saari scholarships hain! Aap kis category mein aate hain? 🏅',
+      ],
+      senior: [
+        'Bilkul, main samajhta hoon. Safety ke liye yaad rakhein — bank kabhi OTP nahi maangta! 🛡️',
+        'Medicine reminder ke liye Health section mein jayen. Main yaad dilaunga ❤️',
+        'Emergency mein SOS button dabayen — pehle family, phir doctor ko call karein 🆘',
+      ],
+      business: [
+        'Business growth ke liye customer retention par dhyan dein. Kis area ko explore karna chahte hain? 📊',
+        'GST filing: Agle mahine ki 11 tareekh tak GSTR-1 file karein 🏛️',
+        'Loan ke liye: 2 saal ki ITR aur 700+ credit score rakhein 💰',
+      ],
+    }
   };
 
-  const arr = responses[persona] || responses.amma;
+  const langResponses = responses[language] || responses.en;
+  const arr = langResponses[persona] || langResponses.amma;
   return arr[Math.floor(Math.random() * arr.length)];
 }
 

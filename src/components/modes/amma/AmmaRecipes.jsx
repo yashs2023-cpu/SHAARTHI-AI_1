@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { useToast } from '../../../hooks/useToast';
+import { useLanguage } from '../../../contexts/LanguageContext';
+import apiService from '../../../services/api';
+import voiceService from '../../../services/voice';
 
-const RECIPES = [
+const DEFAULT_RECIPES = [
   {
     id: 1, cuisine: 'north-indian', name: 'Aloo Gobi Masala',
     time: '25 min', difficulty: 'Easy', servings: 4, calories: 120,
@@ -43,20 +46,104 @@ const CUISINES = [
 export default function AmmaRecipes() {
   const [cuisine, setCuisine] = useState('all');
   const [expanded, setExpanded] = useState(null);
+  
   const { showToast } = useToast();
+  const { language, t } = useLanguage();
+  const rT = t.recipes || {};
 
-  const filtered = cuisine === 'all' ? RECIPES : RECIPES.filter(r => r.cuisine === cuisine);
+  // Use localized mock data
+  const [recipes, setRecipes] = useState([{
+    id: 1, cuisine: 'north-indian', name: rT.defaultMock?.name || 'Aloo Gobi Masala',
+    time: rT.defaultMock?.time || '25 min', difficulty: rT.defaultMock?.diff || 'Easy', servings: 4, calories: 120,
+    ingredients: rT.defaultMock?.ing || [],
+    steps: rT.defaultMock?.steps || [],
+    tip: rT.defaultMock?.tip || '',
+  }]);
+  
+  // AI Generation State
+  const [ingredients, setIngredients] = useState('');
+  const [generating, setGenerating] = useState(false);
+
+  const handleGenerate = async () => {
+    if (!ingredients.trim()) {
+      showToast('Please enter some ingredients!', 'warning');
+      return;
+    }
+    setGenerating(true);
+    showToast(rT.generating || 'Creating a perfect recipe for you...', 'info');
+    try {
+      const newRecipeData = await apiService.generateRecipe(ingredients, language);
+      // Map API response to our format
+      const newRecipe = {
+        id: newRecipeData._id || Date.now(),
+        cuisine: 'north-indian', // default or extract from AI
+        name: newRecipeData.name,
+        time: newRecipeData.cookingTime + ' min',
+        difficulty: newRecipeData.difficulty,
+        servings: newRecipeData.servings || 4,
+        calories: newRecipeData.nutrition?.calories || 0,
+        ingredients: newRecipeData.ingredients,
+        steps: newRecipeData.steps,
+        tip: newRecipeData.tip || 'Cook with love!',
+      };
+      
+      setRecipes([newRecipe, ...recipes]);
+      setExpanded(newRecipe.id);
+      setIngredients('');
+      showToast('Recipe generated perfectly!', 'success');
+    } catch (err) {
+      showToast('Failed to generate recipe.', 'error');
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const handleListen = (recipe) => {
+    const textToSpeak = `${recipe.name}. Ingredients are: ${recipe.ingredients.join(', ')}. Steps are: ${recipe.steps.join('. ')}. Enjoy your meal!`;
+    showToast(`Listening to ${recipe.name}… 🔊`, 'info');
+    voiceService.speak(textToSpeak, language, 'amma');
+  };
+
+  const filtered = cuisine === 'all' ? recipes : recipes.filter(r => r.cuisine === cuisine);
 
   return (
     <div style={styles.page}>
       <div>
-        <h1 style={styles.title}>Indian Recipes 🍳</h1>
-        <p style={styles.subtitle}>Authentic recipes with step-by-step guidance and nutrition info</p>
+        <h1 style={styles.title}>{rT.title}</h1>
+        <p style={styles.subtitle}>{rT.subtitle}</p>
+      </div>
+
+      {/* AI Recipe Generator Box */}
+      <div style={styles.aiGeneratorBox} className="saarthi-card-saffron">
+        <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 8, color: 'var(--navy-deep)' }}>✨ {rT.title}</h3>
+        <p style={{ fontSize: 13, color: 'var(--gray-600)', marginBottom: 12 }}>{rT.subtitle}</p>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <input 
+            className="saarthi-input" 
+            style={{ flex: 1 }}
+            placeholder={rT.placeholder}
+            value={ingredients}
+            onChange={(e) => setIngredients(e.target.value)}
+          />
+          <button 
+            className="btn btn-primary"
+            style={{ borderRadius: 'var(--r-md)' }}
+            onClick={handleGenerate}
+            disabled={generating}
+          >
+            {generating ? rT.generating : `✨ ${rT.generateBtn}`}
+          </button>
+        </div>
       </div>
 
       {/* Cuisine filter */}
       <div style={styles.filters}>
-        {CUISINES.map(c => (
+        {[
+          { key: 'all',          label: rT.all },
+          { key: 'north-indian', label: rT.north },
+          { key: 'south-indian', label: rT.south },
+          { key: 'snacks',       label: rT.snacks },
+        ].map(c => (
           <button
             key={c.key}
             style={{
@@ -84,7 +171,7 @@ export default function AmmaRecipes() {
                 <h3 style={styles.recipeName}>{recipe.name}</h3>
                 <div style={styles.recipeMeta}>
                   <span className="badge badge-saffron">⏱️ {recipe.time}</span>
-                  <span className="badge badge-gold">👥 {recipe.servings} servings</span>
+                  <span className="badge badge-gold">👥 {recipe.servings} {rT.servings}</span>
                   <span className="badge badge-success">🔥 {recipe.calories} cal</span>
                 </div>
               </div>
@@ -97,7 +184,7 @@ export default function AmmaRecipes() {
               <div style={styles.recipeDetails} className="anim-up">
                 <div style={styles.twoCol}>
                   <div>
-                    <h4 style={styles.sectionLabel}>🛒 Ingredients</h4>
+                    <h4 style={styles.sectionLabel}>🛒 {rT.ingredients}</h4>
                     <ul style={styles.ingredientList}>
                       {recipe.ingredients.map((ing, i) => (
                         <li key={i} style={styles.ingredient}>• {ing}</li>
@@ -105,7 +192,7 @@ export default function AmmaRecipes() {
                     </ul>
                   </div>
                   <div>
-                    <h4 style={styles.sectionLabel}>👨‍🍳 Steps</h4>
+                    <h4 style={styles.sectionLabel}>👨‍🍳 {rT.steps}</h4>
                     <ol style={styles.stepsList}>
                       {recipe.steps.map((step, i) => (
                         <li key={i} style={styles.step}>
@@ -118,22 +205,15 @@ export default function AmmaRecipes() {
                 </div>
 
                 <div style={styles.tipBox}>
-                  💡 <strong>Chef's Tip:</strong> {recipe.tip}
+                  💡 <strong>{rT.tip}:</strong> {recipe.tip}
                 </div>
 
                 <div style={styles.recipeActions}>
                   <button
                     className="btn btn-sm btn-primary"
-                    onClick={() => showToast('Listening to recipe… 🔊', 'info')}
+                    onClick={() => handleListen(recipe)}
                   >
-                    🔊 Listen
-                  </button>
-                  <button
-                    className="btn btn-sm"
-                    style={{ background: '#fff', border: '1.5px solid var(--saffron)', color: 'var(--saffron)' }}
-                    onClick={() => showToast('Recipe saved! ❤️', 'success')}
-                  >
-                    ❤️ Save
+                    🔊 {rT.listen}
                   </button>
                 </div>
               </div>
@@ -149,6 +229,14 @@ const styles = {
   page: { display: 'flex', flexDirection: 'column', gap: 20 },
   title: { fontSize: 22, fontWeight: 800, color: 'var(--navy-deep)', marginBottom: 4 },
   subtitle: { fontSize: 14, color: 'var(--gray-500)' },
+
+  aiGeneratorBox: {
+    background: 'var(--ivory)',
+    border: '1.5px solid var(--saffron-glow)',
+    borderRadius: 'var(--r-xl)',
+    padding: '20px',
+    boxShadow: 'var(--shadow-sm)',
+  },
 
   filters: { display: 'flex', gap: 8, flexWrap: 'wrap' },
   filterBtn: {

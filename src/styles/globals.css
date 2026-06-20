@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   SAARTHI AI — PREMIUM INDIAN DESIGN SYSTEM
+   SAARTHI AI — PREMIUM INDIAN ROYAL DESIGN SYSTEM
    ═══════════════════════════════════════════════ */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
 
@@ -22,6 +22,22 @@
   --gold:           #D4AF37;
   --gold-light:     #E8C84A;
   --gold-glow:      rgba(212, 175, 55, 0.2);
+
+  /* ── Indian Royal Colors ── */
+  --royal-maroon:    #800020;
+  --royal-burgundy:  #6B0F2A;
+  --royal-wine:      #722F37;
+  --peacock-blue:    #005F73;
+  --peacock-teal:    #0A9396;
+  --peacock-deep:    #003844;
+  --marigold:        #E9A319;
+  --marigold-deep:   #C17817;
+  --lotus-pink:      #E75480;
+  --lotus-light:     #FFB6C1;
+  --sandalwood:      #C2956B;
+  --temple-red:      #C0392B;
+  --henna-green:     #2D6A4F;
+  --turmeric:        #E3A018;
 
   /* ── Persona Colors ── */
   --amma-primary:   #FF9933;
@@ -66,6 +82,7 @@
   --shadow-xl:  0 20px 60px rgba(15, 23, 42, 0.15);
   --shadow-gold: 0 8px 32px rgba(212, 175, 55, 0.25);
   --shadow-saffron: 0 8px 32px rgba(255, 153, 51, 0.30);
+  --shadow-royal: 0 8px 32px rgba(128, 0, 32, 0.20);
 
   /* ── Glass ── */
   --glass-bg:     rgba(255, 255, 255, 0.08);
@@ -145,6 +162,49 @@ button { cursor: pointer; }
 img { max-width: 100%; display: block; }
 
 /* ════════════════════════════════════════════
+   INDIAN ART PATTERNS (SVG Backgrounds)
+════════════════════════════════════════════ */
+
+/* Paisley / Mango motif subtle background */
+.indian-art-bg {
+  position: relative;
+}
+.indian-art-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40 10 C55 10, 70 25, 70 40 C70 55, 55 70, 40 70 C25 70, 20 55, 25 40 C30 25, 25 10, 40 10Z' fill='none' stroke='%23800020' stroke-width='1.5'/%3E%3Ccircle cx='40' cy='35' r='4' fill='%23D4AF37' opacity='0.5'/%3E%3C/svg%3E");
+  background-size: 80px 80px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Lotus pattern overlay */
+.lotus-art-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cellipse cx='60' cy='60' rx='18' ry='35' fill='none' stroke='%23E75480' stroke-width='1' transform='rotate(0 60 60)'/%3E%3Cellipse cx='60' cy='60' rx='18' ry='35' fill='none' stroke='%23E75480' stroke-width='1' transform='rotate(45 60 60)'/%3E%3Cellipse cx='60' cy='60' rx='18' ry='35' fill='none' stroke='%23E75480' stroke-width='1' transform='rotate(90 60 60)'/%3E%3Cellipse cx='60' cy='60' rx='18' ry='35' fill='none' stroke='%23E75480' stroke-width='1' transform='rotate(135 60 60)'/%3E%3Ccircle cx='60' cy='60' r='6' fill='%23D4AF37' opacity='0.4'/%3E%3C/svg%3E");
+  background-size: 120px 120px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Jali / Geometric lattice overlay */
+.jali-art-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z' fill='none' stroke='%23D4AF37' stroke-width='0.8'/%3E%3Ccircle cx='30' cy='30' r='8' fill='none' stroke='%23800020' stroke-width='0.6'/%3E%3C/svg%3E");
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ════════════════════════════════════════════
    UTILITY CLASSES
 ════════════════════════════════════════════ */
 .sr-only {
@@ -170,6 +230,13 @@ img { max-width: 100%; display: block; }
 
 .gradient-navy {
   background: linear-gradient(135deg, var(--navy-light), var(--navy-deep));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-royal {
+  background: linear-gradient(135deg, var(--royal-maroon), var(--marigold), var(--peacock-teal));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -221,6 +288,16 @@ img { max-width: 100%; display: block; }
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 40px rgba(255, 153, 51, 0.4);
+}
+
+.btn-royal {
+  background: linear-gradient(135deg, var(--royal-maroon), var(--royal-burgundy));
+  color: #fff;
+  box-shadow: var(--shadow-royal);
+}
+.btn-royal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(128, 0, 32, 0.35);
 }
 
 .btn-gold {
@@ -276,6 +353,10 @@ img { max-width: 100%; display: block; }
   box-shadow: var(--shadow-lg);
 }
 
+.saarthi-card.no-hover:hover {
+  transform: none;
+}
+
 .saarthi-card-glass {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(20px);
@@ -285,6 +366,25 @@ img { max-width: 100%; display: block; }
   padding: 24px;
   box-shadow: var(--shadow-md);
   transition: var(--t-normal);
+}
+
+/* Royal gold border card */
+.saarthi-card-royal {
+  background: var(--white);
+  border-radius: var(--r-xl);
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  transition: var(--t-normal);
+  position: relative;
+}
+.saarthi-card-royal::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: 20px; right: 20px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  border-radius: 0 0 4px 4px;
 }
 
 /* ════════════════════════════════════════════
@@ -333,6 +433,7 @@ textarea.saarthi-input {
 .badge-danger  { background: rgba(239, 68, 68, 0.1);  color: #991B1B; }
 .badge-warning { background: rgba(245, 158, 11, 0.1); color: #92400E; }
 .badge-info    { background: rgba(59, 130, 246, 0.1); color: #1E40AF; }
+.badge-royal   { background: rgba(128, 0, 32, 0.1);  color: var(--royal-maroon); }
 
 /* ════════════════════════════════════════════
    ANIMATIONS
@@ -382,6 +483,27 @@ textarea.saarthi-input {
   to   { transform: rotate(360deg); }
 }
 
+@keyframes gold-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes chakra-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes gentle-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%      { opacity: 1; transform: scale(1.05); }
+}
+
+@keyframes paisley-drift {
+  0%   { transform: translateY(0) rotate(0deg); }
+  50%  { transform: translateY(-12px) rotate(5deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
 .anim-up    { animation: slideInUp 0.5s ease-out both; }
 .anim-left  { animation: slideInLeft 0.5s ease-out both; }
 .anim-right { animation: slideInRight 0.5s ease-out both; }
@@ -393,6 +515,24 @@ textarea.saarthi-input {
 .anim-delay-3 { animation-delay: 0.3s; }
 .anim-delay-4 { animation-delay: 0.4s; }
 .anim-delay-5 { animation-delay: 0.5s; }
+
+/* Gold shimmer effect for premium elements */
+.gold-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--gold) 0%,
+    var(--gold-light) 20%,
+    #FFF6D5 40%,
+    var(--gold-light) 60%,
+    var(--gold) 80%,
+    var(--gold) 100%
+  );
+  background-size: 200% auto;
+  animation: gold-shimmer 3s linear infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
 /* ════════════════════════════════════════════
    LAYOUT HELPERS
@@ -522,83 +662,6 @@ textarea.saarthi-input {
 }
 
 /* ════════════════════════════════════════════
-   RESPONSIVE
-════════════════════════════════════════════ */
-@media (max-width: 1024px) {
-  .dashboard-sidebar { width: 220px; }
-  .dashboard-main { margin-left: 220px; }
-}
-
-@media (max-width: 768px) {
-  .dashboard-sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-  .dashboard-main { margin-left: 0; }
-  .section { padding: 48px 0; }
-  .container { padding: 0 16px; }
-  .btn-lg { padding: 14px 28px; }
-}
-
-@media (max-width: 480px) {
-  body { font-size: 14px; }
-  .saarthi-card { padding: 16px; }
-}
-
-/* ════════════════════════════════════════════
-   SPIN ANIMATION for loader
-════════════════════════════════════════════ */
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-/* ════════════════════════════════════════════
-   MOBILE RESPONSIVE — show mobile topbar
-════════════════════════════════════════════ */
-@media (max-width: 768px) {
-  .dashboard-shell { flex-direction: column; }
-
-  .dashboard-sidebar {
-    position: fixed;
-    top: 0; left: 0; bottom: 0;
-    width: 280px;
-    transform: translateX(-100%);
-    z-index: 200;
-  }
-
-  .dashboard-sidebar.open {
-    transform: translateX(0);
-  }
-
-  .dashboard-main {
-    margin-left: 0 !important;
-  }
-
-  [class*="mobileTopBar"] {
-    display: flex !important;
-  }
-
-  [class*="content"] {
-    padding: 20px 16px !important;
-  }
-}
-
-/* ════════════════════════════════════════════
-   HOVER STATES for cards
-════════════════════════════════════════════ */
-.saarthi-card:hover {
-  transform: translateY(-3px);
-}
-
-.saarthi-card.no-hover:hover {
-  transform: none;
-}
-
-/* ════════════════════════════════════════════
    TYPING ANIMATION for AI chat
 ════════════════════════════════════════════ */
 @keyframes typing-bounce {
@@ -633,9 +696,47 @@ select.saarthi-input {
 }
 
 /* ════════════════════════════════════════════
-   FLOAT ANIMATION for persona cards
+   RESPONSIVE
 ════════════════════════════════════════════ */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-8px); }
+@media (max-width: 1024px) {
+  .dashboard-sidebar { width: 220px; }
+  .dashboard-main { margin-left: 220px; }
+}
+
+@media (max-width: 768px) {
+  .dashboard-shell { flex-direction: column; }
+
+  .dashboard-sidebar {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: 280px;
+    transform: translateX(-100%);
+    z-index: 200;
+  }
+
+  .dashboard-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .dashboard-main {
+    margin-left: 0 !important;
+  }
+
+  [class*="mobileTopBar"],
+  [class*="mobileBar"] {
+    display: flex !important;
+  }
+
+  [class*="content"] {
+    padding: 20px 16px !important;
+  }
+
+  .section { padding: 48px 0; }
+  .container { padding: 0 16px; }
+  .btn-lg { padding: 14px 28px; }
+}
+
+@media (max-width: 480px) {
+  body { font-size: 14px; }
+  .saarthi-card { padding: 16px; }
 }

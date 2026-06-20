@@ -37,15 +37,17 @@ export default function PersonaSelectPage() {
   };
 
   return (
-    <div style={styles.page}>
+    <div style={styles.page} className="indian-art-bg">
       {/* Header */}
       <div style={styles.header}>
         <div style={styles.greeting}>
-          🙏 Namaste, <span style={{ color: 'var(--saffron)' }}>{user?.name || 'Friend'}</span>!
+          🙏 Namaste, <span style={{ color: 'var(--royal-maroon)', fontWeight: 700 }}>{user?.name || 'Friend'}</span>!
         </div>
-        <h1 style={styles.title}>Choose Your Saarthi</h1>
+        <h1 style={styles.title}>
+          <span className="gradient-royal">Choose Your Saarthi</span>
+        </h1>
         <p style={styles.subtitle}>
-          Pick the persona that matches your needs — you can switch anytime
+          Pick the digital companion that matches your needs — you can switch anytime
         </p>
       </div>
 
@@ -56,8 +58,8 @@ export default function PersonaSelectPage() {
           return (
             <div
               key={persona.key}
-              className={`anim-up anim-delay-${i + 1}`}
-              style={styles.card}
+              className="saarthi-card-royal anim-up"
+              style={{ ...styles.card, animationDelay: `${(i + 1) * 0.1}s` }}
               onClick={() => handleSelect(persona.key)}
               role="button"
               tabIndex={0}
@@ -69,8 +71,15 @@ export default function PersonaSelectPage() {
                 ...styles.cardIllustration,
                 background: details.bgGradient,
               }}>
-                <div style={{ ...styles.cardEmoji, color: persona.color }}>
-                  {persona.avatar}
+                {/* Lotus Petal Avatar */}
+                <div style={{
+                  ...styles.cardEmoji,
+                  background: 'rgba(255, 255, 255, 0.7)',
+                  border: `2px solid ${persona.color}`,
+                }}>
+                  <span style={{ display: 'inline-block', transform: 'rotate(45deg)' }}>
+                    {persona.avatar}
+                  </span>
                 </div>
                 <div style={{ ...styles.personaTag, background: persona.color }}>
                   {persona.emoji} {persona.name}
@@ -120,7 +129,8 @@ const styles = {
   page: {
     minHeight: '100vh',
     background: 'var(--ivory)',
-    padding: '48px 24px 64px',
+    padding: '64px 24px',
+    position: 'relative',
   },
   header: {
     textAlign: 'center',
@@ -129,15 +139,14 @@ const styles = {
     margin: '0 auto 48px',
   },
   greeting: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 600,
     color: 'var(--gray-600)',
     marginBottom: 8,
   },
   title: {
-    fontSize: 'clamp(1.8rem, 4vw, 2.8rem)',
+    fontSize: 'clamp(2rem, 4vw, 3rem)',
     fontWeight: 800,
-    color: 'var(--navy-deep)',
     marginBottom: 12,
   },
   subtitle: {
@@ -154,24 +163,28 @@ const styles = {
   },
   card: {
     background: '#fff',
-    borderRadius: 'var(--r-2xl)',
+    borderRadius: '40px 40px 16px 16px', // Arch-top
     overflow: 'hidden',
-    boxShadow: 'var(--shadow-md)',
     cursor: 'pointer',
     transition: 'var(--t-normal)',
-    border: '2px solid transparent',
   },
   cardIllustration: {
-    padding: '32px 24px',
+    padding: '36px 24px 28px',
     textAlign: 'center',
     position: 'relative',
+    borderBottom: '1px solid rgba(0,0,0,0.05)',
   },
   cardEmoji: {
-    fontSize: 64,
-    marginBottom: 12,
-    display: 'block',
-    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))',
-    animation: 'float 3s ease-in-out infinite',
+    width: 80,
+    height: 80,
+    borderRadius: '50% 50% 0 50%',
+    transform: 'rotate(-45deg)',
+    margin: '0 auto 16px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: 40,
+    boxShadow: 'var(--shadow-md)',
   },
   personaTag: {
     display: 'inline-flex',
@@ -184,14 +197,15 @@ const styles = {
     fontWeight: 700,
     boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
   },
-  cardBody: { padding: '20px 24px 24px' },
+  cardBody: { padding: '24px' },
   cardDesc: {
-    fontSize: 14,
+    fontSize: 14.5,
     color: 'var(--gray-600)',
     lineHeight: 1.6,
-    marginBottom: 16,
+    marginBottom: 20,
+    fontWeight: 500,
   },
-  benefitList: { listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 },
+  benefitList: { listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 },
   benefitItem: {
     display: 'flex',
     alignItems: 'flex-start',

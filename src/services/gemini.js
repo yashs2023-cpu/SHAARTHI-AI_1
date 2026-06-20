@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const GEMINI_API_KEY = process.env.VITE_GEMINI_API_KEY;
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
 const geminiService = {
@@ -161,6 +161,40 @@ const geminiService = {
       return jsonMatch ? JSON.parse(jsonMatch[0]) : null;
     } catch (error) {
       console.error('Gemini Marketing Error:', error);
+      return null;
+    }
+  },
+
+  async analyzeScam(message, type, language = 'en') {
+    try {
+      const prompt = `Analyze this ${type} for potential scams or fraud.
+      Content: "${message}"
+
+      Format strictly as JSON with:
+      {
+        "riskScore": number from 0 to 100,
+        "riskLevel": "CRITICAL", "HIGH", "MEDIUM", "LOW", or "SAFE",
+        "recommendation": "What the user should do",
+        "detectedScams": [
+          { "type": "phishing/fraud/etc", "risk": "high/medium/low", "description": "Brief explanation" }
+        ],
+        "suspiciousIndicators": ["indicator 1", "indicator 2"]
+      }
+      
+      Provide the 'recommendation', 'description' and 'suspiciousIndicators' in this language: ${language}`;
+
+      const response = await axios.post(
+        `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`,
+        {
+          contents: [{ parts: [{ text: prompt }] }]
+        }
+      );
+
+      const content = response.data.candidates[0].content.parts[0].text;
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      return jsonMatch ? JSON.parse(jsonMatch[0]) : null;
+    } catch (error) {
+      console.error('Gemini Scam Analysis Error:', error);
       return null;
     }
   }

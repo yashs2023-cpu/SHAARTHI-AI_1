@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import scamDetectionService from '../services/scamDetection';
 import { useToast } from '../hooks/useToast';
 import { useMode } from '../contexts/ModeContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const TYPES = [
   { key: 'sms',      label: 'SMS',         icon: '📱', desc: 'Forward a suspicious SMS' },
@@ -29,29 +30,26 @@ export default function ScamShieldPage() {
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
   const { currentPersona } = useMode();
+  const { language, t } = useLanguage();
   const navigate = useNavigate();
+  const sT = t?.scam || {};
 
   const backPath = currentPersona ? `/${currentPersona.key}` : '/choose';
 
-  const analyze = () => {
+  const analyze = async () => {
     if (!message.trim()) {
-      showToast('Please paste a message or URL to check', 'warning');
+      showToast(sT.errorEmpty || 'Please paste a message or URL to check', 'warning');
       return;
     }
     setLoading(true);
-    setTimeout(() => {
-      let res;
-      switch (type) {
-        case 'sms':      res = scamDetectionService.analyzeSMS(message); break;
-        case 'whatsapp': res = scamDetectionService.analyzeWhatsApp(message); break;
-        case 'upi':      res = scamDetectionService.analyzeUPITransaction(message); break;
-        case 'url':      res = scamDetectionService.detectPhishingLink(message); break;
-        case 'email':    res = scamDetectionService.analyzeSMS(message); break;
-        default:         res = scamDetectionService.analyzeSMS(message);
-      }
+    try {
+      const res = await scamDetectionService.analyze(message, type, language);
       setResult(res);
+    } catch (error) {
+      showToast(sT.errorFailed || 'Analysis failed. Please try again.', 'error');
+    } finally {
       setLoading(false);
-    }, 800);
+    }
   };
 
   const riskLevel = result?.riskLevel || 'LOW';
@@ -75,9 +73,9 @@ export default function ScamShieldPage() {
       <div style={styles.header}>
         <div style={styles.shieldIcon}>🛡️</div>
         <div>
-          <h1 style={styles.title}>Scam Shield</h1>
+          <h1 style={styles.title}>{sT.title || 'Scam Shield'}</h1>
           <p style={styles.subtitle}>
-            India's AI-powered fraud detector — check any suspicious message, link or payment
+            {sT.subtitle || "India's AI-powered fraud detector — check any suspicious message, link or payment"}
           </p>
         </div>
       </div>
@@ -97,7 +95,7 @@ export default function ScamShieldPage() {
         <div style={styles.leftPanel}>
           {/* Type selector */}
           <div className="saarthi-card">
-            <h3 style={styles.cardTitle}>What do you want to check?</h3>
+            <h3 style={styles.cardTitle}>{sT.whatToCheck || 'What do you want to check?'}</h3>
             <div style={styles.typeGrid}>
               {TYPES.map(t => (
                 <button
@@ -111,7 +109,7 @@ export default function ScamShieldPage() {
                   onClick={() => { setType(t.key); setResult(null); }}
                 >
                   <span style={{ fontSize: 22 }}>{t.icon}</span>
-                  <span style={{ fontSize: 12, fontWeight: 700 }}>{t.label}</span>
+                  <span style={{ fontSize: 12, fontWeight: 700 }}>{sT.types?.[t.key] || t.label}</span>
                 </button>
               ))}
             </div>
@@ -125,11 +123,7 @@ export default function ScamShieldPage() {
             <textarea
               className="saarthi-input"
               style={{ minHeight: 120, resize: 'vertical' }}
-              placeholder={
-                type === 'url'
-                  ? 'Paste the URL or link here…'
-                  : 'Paste the suspicious message here…'
-              }
+              placeholder={sT.placeholder || 'Paste the suspicious message here...'}
               value={message}
               onChange={e => setMessage(e.target.value)}
               aria-label="Message to check"
@@ -145,7 +139,7 @@ export default function ScamShieldPage() {
               onClick={analyze}
               disabled={loading}
             >
-              {loading ? '🔍 Analyzing…' : '🔍 Check for Scam'}
+              {loading ? (sT.checking || '🔍 Analyzing…') : `🔍 ${sT.checkBtn || 'Check for Scam'}`}
             </button>
             <button
               style={styles.clearBtn}

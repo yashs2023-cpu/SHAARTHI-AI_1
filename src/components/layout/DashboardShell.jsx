@@ -3,12 +3,17 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useMode } from '../../contexts/ModeContext';
 import VoiceButton from '../shared/VoiceButton';
+import AIChat from '../shared/AIChat';
+import LanguageSelector from '../shared/LanguageSelector';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function DashboardShell({ persona, navItems, children }) {
   const { user, logout } = useAuth();
   const { clearPersona } = useMode();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const { t } = useLanguage();
 
   const handleLogout = () => {
     clearPersona();
@@ -22,6 +27,19 @@ export default function DashboardShell({ persona, navItems, children }) {
   };
 
   const accentColor = persona?.color || '#FF9933';
+  
+  // Helper to translate nav labels
+  const getNavLabel = (label) => {
+    if (!t?.nav) return label;
+    const lower = label.toLowerCase();
+    if (lower.includes('dashboard')) return t.nav.dashboard;
+    if (lower.includes('ai assistant')) return t.nav.aiAssistant;
+    if (lower.includes('scheme')) return t.nav.schemes;
+    if (lower.includes('recipe')) return t.nav.recipes;
+    if (lower.includes('community')) return t.nav.community;
+    if (lower.includes('scam')) return t.nav.scamShield;
+    return label;
+  };
 
   return (
     <div style={styles.shell}>
@@ -31,14 +49,24 @@ export default function DashboardShell({ persona, navItems, children }) {
       )}
 
       {/* ── Sidebar ── */}
-      <aside style={{
-        ...styles.sidebar,
-        background: `linear-gradient(180deg, ${persona?.colorDark || '#0F172A'} 0%, #0F172A 100%)`,
-        transform: sidebarOpen ? 'translateX(0)' : undefined,
-      }}>
+      <aside 
+        className="indian-art-bg"
+        style={{
+          ...styles.sidebar,
+          background: `linear-gradient(180deg, ${persona?.colorDark || '#0F172A'} 0%, #0F172A 100%)`,
+          transform: sidebarOpen ? 'translateX(0)' : undefined,
+          borderRight: '3px solid var(--gold)',
+        }}
+      >
         {/* Logo */}
-        <div style={styles.logoArea}>
-          <div style={{ ...styles.personaAvatar, background: accentColor + '22', color: accentColor }}>
+        <div style={{ ...styles.logoArea, position: 'relative', zIndex: 1 }}>
+          <div style={{ 
+            ...styles.personaAvatar, 
+            background: accentColor + '22', 
+            color: accentColor,
+            border: `1.5px solid ${accentColor}`,
+            boxShadow: `0 4px 10px ${accentColor}33`
+          }}>
             {persona?.avatar || '🤖'}
           </div>
           <div>
@@ -50,18 +78,18 @@ export default function DashboardShell({ persona, navItems, children }) {
         </div>
 
         {/* User chip */}
-        <div style={styles.userChip}>
+        <div style={{ ...styles.userChip, position: 'relative', zIndex: 1 }}>
           <div style={styles.userAvatar}>
             {(user?.name || 'U')[0].toUpperCase()}
           </div>
           <div style={{ overflow: 'hidden' }}>
-            <div style={styles.userName}>{user?.name || 'User'}</div>
+            <div style={styles.userName}>{user?.name || t?.shell?.user || 'User'}</div>
             <div style={styles.userEmail}>{user?.email}</div>
           </div>
         </div>
 
         {/* Nav items */}
-        <nav style={styles.nav} aria-label="Dashboard navigation">
+        <nav style={{ ...styles.nav, position: 'relative', zIndex: 1 }} aria-label="Dashboard navigation">
           {navItems.map(item => (
             <NavLink
               key={item.path}
@@ -76,18 +104,21 @@ export default function DashboardShell({ persona, navItems, children }) {
               onClick={() => setSidebarOpen(false)}
             >
               <span style={styles.navIcon}>{item.icon}</span>
-              <span>{item.label}</span>
+              <span>{getNavLabel(item.label)}</span>
             </NavLink>
           ))}
         </nav>
 
         {/* Bottom buttons */}
-        <div style={styles.sidebarBottom}>
+        <div style={{ ...styles.sidebarBottom, position: 'relative', zIndex: 1 }}>
+          <div style={{ marginBottom: 8 }}>
+            <LanguageSelector />
+          </div>
           <button style={styles.switchBtn} onClick={handleSwitchPersona}>
-            🔄 Switch Persona
+            🔄 {t?.nav?.switchPersona || 'Switch Persona'}
           </button>
           <button style={styles.logoutBtn} onClick={handleLogout}>
-            🚪 Logout
+            🚪 {t?.nav?.logout || 'Logout'}
           </button>
         </div>
       </aside>
@@ -102,7 +133,10 @@ export default function DashboardShell({ persona, navItems, children }) {
           <span style={{ fontWeight: 700, color: '#1B365D', fontSize: 16 }}>
             {persona?.name || 'Saarthi'}
           </span>
-          <VoiceButton size={36} persona={persona?.key} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <LanguageSelector />
+            <VoiceButton size={36} persona={persona?.key} />
+          </div>
         </div>
 
         {/* Content */}
@@ -110,6 +144,35 @@ export default function DashboardShell({ persona, navItems, children }) {
           {children}
         </div>
       </main>
+
+      {/* Floating AI Assistant Button & Window */}
+      {persona?.key && (
+        <>
+          <button
+            style={{
+              ...styles.floatingBtn,
+              background: accentColor,
+              boxShadow: `0 8px 24px ${accentColor}66`
+            }}
+            onClick={() => setChatOpen(!chatOpen)}
+            aria-label="Toggle AI Assistant"
+          >
+            {chatOpen ? '✕' : '🤖'}
+          </button>
+
+          {chatOpen && (
+            <div style={styles.floatingChat}>
+              <div style={{...styles.chatHeader, background: accentColor}}>
+                <span style={{ fontWeight: 600 }}>{persona.name} AI Assistant</span>
+                <button style={styles.closeChatBtn} onClick={() => setChatOpen(false)}>✕</button>
+              </div>
+              <div style={{ height: 450 }}>
+                <AIChat persona={persona.key} placeholder={`Ask ${persona.name} anything...`} />
+              </div>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }
@@ -241,5 +304,51 @@ const styles = {
   content: {
     padding: '28px 32px',
     flex: 1,
+  },
+  floatingBtn: {
+    position: 'fixed',
+    bottom: 30,
+    right: 30,
+    width: 60,
+    height: 60,
+    borderRadius: '50%',
+    color: '#fff',
+    fontSize: 28,
+    border: 'none',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+    transition: 'transform 0.2s',
+  },
+  floatingChat: {
+    position: 'fixed',
+    bottom: 100,
+    right: 30,
+    width: 360,
+    background: '#fff',
+    borderRadius: 'var(--r-xl)',
+    boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
+    zIndex: 1000,
+    overflow: 'hidden',
+    border: '1px solid var(--gray-200)',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  chatHeader: {
+    padding: '12px 16px',
+    color: '#fff',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  closeChatBtn: {
+    background: 'none',
+    border: 'none',
+    color: '#fff',
+    fontSize: 18,
+    cursor: 'pointer',
+    opacity: 0.8,
   },
 };

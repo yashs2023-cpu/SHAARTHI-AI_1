@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ModeProvider } from './contexts/ModeContext';
 import { ToastProvider } from './contexts/ToastContext';
+import { LanguageProvider } from './contexts/LanguageContext';
 
 // Pages
 import LandingPage from './pages/Landing';
@@ -20,11 +21,13 @@ import Toast from './components/shared/Toast';
 export default function App() {
   return (
     <AuthProvider>
-      <ModeProvider>
-        <ToastProvider>
-          <AppRoutes />
-        </ToastProvider>
-      </ModeProvider>
+      <LanguageProvider>
+        <ModeProvider>
+          <ToastProvider>
+            <AppRoutes />
+          </ToastProvider>
+        </ModeProvider>
+      </LanguageProvider>
     </AuthProvider>
   );
 }
