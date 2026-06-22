@@ -4,7 +4,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { Card } from '../../shared/Card';
 
 const QUICK_ACTIONS = [
-  { icon: '🤖', label: 'Ask AI',       path: '/amma/ai',        color: '#FF9933', bg: '#FFF8E7' },
+  { icon: '🤖', label: 'Ask AI',       path: '/amma/ai',        color: '#D4547A', bg: '#FFF0F5' },
   { icon: '🏛️', label: 'Schemes',      path: '/amma/schemes',   color: '#10B981', bg: '#ECFDF5' },
   { icon: '🍳', label: 'Recipes',      path: '/amma/recipes',   color: '#F59E0B', bg: '#FFFBEB' },
   { icon: '👥', label: 'Community',    path: '/amma/community', color: '#6C63FF', bg: '#F5F3FF' },
@@ -31,7 +31,7 @@ export default function AmmaHome() {
         <div>
           <p style={styles.greetingText}>{greeting} 🙏</p>
           <h1 style={styles.welcomeTitle}>
-            नमस्ते, <span style={{ color: 'var(--saffron)' }}>{user?.name || 'Amma'}</span>
+            नमस्ते, <span style={{ color: '#FFD6E7' }}>{user?.name || 'Amma'}</span>
           </h1>
           <p style={styles.welcomeDesc}>
             Aapka Saarthi aaj ki zarooratein poori karne ke liye ready hai
@@ -74,7 +74,7 @@ export default function AmmaHome() {
               </div>
               <button
                 className="btn btn-sm"
-                style={{ marginTop: 12, background: 'var(--saffron)', color: '#fff', borderRadius: 'var(--r-full)', fontSize: 12 }}
+                style={{ marginTop: 12, background: '#D4547A', color: '#fff', borderRadius: 'var(--r-full)', fontSize: 12 }}
                 onClick={() => navigate('/amma/schemes')}
               >
                 Apply
@@ -109,7 +109,7 @@ const styles = {
   page: { display: 'flex', flexDirection: 'column', gap: 28 },
 
   welcomeBanner: {
-    background: 'linear-gradient(135deg, var(--saffron) 0%, var(--saffron-dark) 100%)',
+    background: 'linear-gradient(135deg, #D4547A 0%, #A83860 100%)',
     borderRadius: 'var(--r-2xl)',
     padding: '28px 32px',
     color: '#fff',
@@ -118,7 +118,7 @@ const styles = {
     alignItems: 'center',
     position: 'relative',
     overflow: 'hidden',
-    boxShadow: 'var(--shadow-saffron)',
+    boxShadow: '0 8px 32px rgba(212, 84, 122, 0.35)',
   },
   greetingText: { fontSize: 13, opacity: 0.85, marginBottom: 4, fontWeight: 500 },
   welcomeTitle: {
@@ -138,7 +138,7 @@ const styles = {
     fontSize: 18, fontWeight: 700, color: 'var(--navy-deep)', marginBottom: 14,
   },
   viewAll: {
-    background: 'none', border: 'none', color: 'var(--saffron)',
+    background: 'none', border: 'none', color: '#D4547A',
     fontWeight: 600, fontSize: 13, cursor: 'pointer',
   },
 
@@ -171,7 +171,7 @@ const styles = {
   },
   schemeIcon: { fontSize: 28, marginBottom: 4 },
   schemeName: { fontSize: 14, fontWeight: 700, color: 'var(--navy-deep)', lineHeight: 1.3 },
-  schemeBenefit: { fontSize: 13, color: 'var(--saffron)', fontWeight: 600 },
+  schemeBenefit: { fontSize: 13, color: '#D4547A', fontWeight: 600 },
 
   scamBanner: {
     background: 'linear-gradient(135deg, #FEF2F2, #FECACA)',
