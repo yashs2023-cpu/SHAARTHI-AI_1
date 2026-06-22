@@ -2,12 +2,13 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useMode, PERSONAS } from '../contexts/ModeContext';
+import PersonaLogo from '../components/shared/PersonaLogo';
 
 const PERSONA_DETAILS = {
   amma: {
     benefits: ['Access govt. schemes worth ₹lakhs', 'AI-powered recipe & grocery planner', 'Scam protection for your family', 'Community & SHG connections'],
     illustration: '🏡',
-    bgGradient: 'linear-gradient(135deg, #FFF8E7 0%, #FFE4B5 100%)',
+    bgGradient: 'linear-gradient(135deg, #FFF0F5 0%, #FFD6E7 100%)',
   },
   student: {
     benefits: ['Personalized career roadmap', 'Scholarship & internship finder', 'AI study notes generator', 'Resume builder & mock interviews'],
@@ -71,15 +72,9 @@ export default function PersonaSelectPage() {
                 ...styles.cardIllustration,
                 background: details.bgGradient,
               }}>
-                {/* Lotus Petal Avatar */}
-                <div style={{
-                  ...styles.cardEmoji,
-                  background: 'rgba(255, 255, 255, 0.7)',
-                  border: `2px solid ${persona.color}`,
-                }}>
-                  <span style={{ display: 'inline-block', transform: 'rotate(45deg)' }}>
-                    {persona.avatar}
-                  </span>
+                {/* SVG Persona Logo */}
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+                  <PersonaLogo persona={persona.key} size={88} />
                 </div>
                 <div style={{ ...styles.personaTag, background: persona.color }}>
                   {persona.emoji} {persona.name}
